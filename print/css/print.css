@@ -1,0 +1,70 @@
+html, body {
+	font-size: 12px;
+	font-family: 'Tahoma', 'Helvetica';
+}
+
+pre {
+	font-size: 11px;
+	font-family: 'Consolas';
+}
+
+.trips-print {
+	/*border: 1px #99BBE8 solid;*/
+	/*border-collapse: collapse;*/
+	border-spacing: 0px 0px;
+	margin-bottom: 15px;
+
+	width: 100%;
+}
+
+	.trips-print th {
+		text-align: left;
+		border: 2px #99BBE8 solid;
+
+		background-color: #BCD2EF;
+	}
+
+	.trips-print td {
+		/*border-top: 2px #99BBE8 solid;
+		border-right: 2px #99BBE8 solid;*/
+
+		border: 1px #99BBE8 solid;
+		border-spacing: 20px;
+	}
+
+.trip-comments {
+	color: #555555;
+	text-align: center;
+	border-top: none !important;
+	padding: 5px;
+}
+
+.list-columns {
+	list-style-type: none;
+	padding: 0px;
+	width: 300px;
+	height: 100px;
+}
+
+	.list-columns li {
+		float: left;
+		width: 100px;
+	}
+
+.slkbutton {
+	background: #31667F;
+	color: #EBEBEB;
+	text-decoration: none;
+	font-family: 'Tahoma';
+	font-size: 12px;
+	font-weight: bold;
+	padding: 4px 8px 4px 8px;
+	outline: none;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+
+	text-shadow: #555555 1px 1px 1px;
+}
+
+.slkbutton.emphasis { background: #7DB806 !important; }
+.slkbutton.negative { background: #E30707 !important; }
