@@ -6,7 +6,7 @@ include_once dirname(__FILE__) . '/common.inc.php';
 $json['errors'] = array();
 
 $table = 'trips';
-$select_trip = mysql_query("SELECT * FROM $table WHERE id = '" . mysql_real_escape_string($_REQUEST['id']) . "'");
+$select_trip = mysql_query("SELECT * FROM $table WHERE recycled <> 'true' AND id = '" . mysql_real_escape_string($_REQUEST['id']) . "'");
 $trip = mysql_fetch_array($select_trip);
 
 if (empty($trip)) {

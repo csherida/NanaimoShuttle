@@ -59,7 +59,7 @@ if (empty($json['errors'])) {
         $trip_id = mysql_insert_id();
 
         $trip_table = 'trips';
-        $select = mysql_query("SELECT * FROM $trip_table WHERE id = '" . $trip_id . "'");
+        $select = mysql_query("SELECT * FROM $trip_table WHERE recycled <> 'true' AND id = '" . $trip_id . "'");
         $record = mysql_fetch_assoc($select);
 
         $record['timestamp'] = $record['date'] . ' ' . $record['time'];

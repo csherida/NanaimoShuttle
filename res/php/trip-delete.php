@@ -6,7 +6,7 @@ include_once dirname(__FILE__) . '/common.inc.php';
 $json['errors'] = array();
 
 if (empty($_REQUEST['id'])) {
-    $json['errors'][] = 'Please select the trip you would like to permanently delete.';
+    $json['errors'][] = 'Please select the trip you would like to remove.';
 }
 
 $table = 'trips';
@@ -21,8 +21,7 @@ if (empty($json['errors'])) {
 
     if (!empty($trip['date'])) {
 
-        //$query = "DELETE FROM $table WHERE recycled = 'true' AND id  = '" . mysql_real_escape_string($_REQUEST['id']) . "'";
-        $query = "UPDATE $table SET recycled = 'true' WHERE id  = '" . mysql_real_escape_string($_REQUEST['id']) . "'";
+        $query = "DELETE FROM $table WHERE recycled <> 'true' AND id  = '" . mysql_real_escape_string($_REQUEST['id']) . "'";
 
     } else {
 
@@ -32,7 +31,7 @@ if (empty($json['errors'])) {
 
     if (mysql_query($query)) {
 
-        $json['message'] = 'Trip has successfully been placed into the recycle bin.';
+        $json['message'] = 'Trip has successfully been removed.';
 
     } else {
 

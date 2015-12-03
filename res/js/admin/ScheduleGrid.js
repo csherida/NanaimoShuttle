@@ -40,6 +40,7 @@ ScheduleGrid = function(viewer, config) {
     }, Trip),
 
     this.store = new Ext.data.GroupingStore({
+        autoLoad: true,
         url: 'res/php/schedule-load.php',
         reader: this.reader,
         groupField:'date'
@@ -335,10 +336,12 @@ Ext.extend(ScheduleGrid, Ext.grid.EditorGridPanel, {
         }
     },
 
-    loadSchedule : function(date) {
+    loadSchedule : function(date, recycled) {
         this.store.baseParams = {
-            date: date
+            date: date,
+            recycled: recycled
         };
+        console.log('About to load data.');
         this.store.load();
     },
 

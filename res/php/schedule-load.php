@@ -5,8 +5,9 @@ include_once dirname(__FILE__) . '/common.inc.php';
 
 $date   = $_REQUEST['date'];
 $filter = $_REQUEST['filter'];
+$recycled = $_REQUEST['recycled'];
 
-$where = "";
+$where = "CURDATE() BETWEEN effective and expiration AND ";
 $search = array();
 if (is_array($filter)) {
 	for ($i = 0; $i < count($filter); $i++) {
@@ -47,6 +48,16 @@ if (is_array($filter)) {
     $where .= "(`date` = '" . $date . "' OR (`date` IS NULL AND NOT FIND_IN_SET('" . $date . "', `exclude`)))";
 }
 
+//if ("" === "$recycled") {
+//    $recycleClause = "recycled <> 'true'";
+//}
+if ("true" === "$recycled") {
+    $recycleClause = "recycled = 'true'";
+}
+else {
+    $recycleClause = "recycled <> 'true'";
+}
+
 //if (in_array('date', $search)) {
 //    $query = "SELECT * FROM trips WHERE " . trim($where, " AND");
 //} else {
@@ -54,7 +65,7 @@ if (is_array($filter)) {
 //}
 
 $table = 'trips';
-$query = "SELECT * FROM $table WHERE " . trim($where, " AND");
+$query = "SELECT * FROM $table WHERE ((expiration IS NULL) OR ('$date' BETWEEN effective AND expiration)) AND $recycleClause AND " . trim($where, " AND");
 
 $json['query'] = $query;
 

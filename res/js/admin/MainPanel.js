@@ -36,6 +36,30 @@ MainPanel = function(){
             }
         })
     };
+    
+    this.recycleBinButton = new Ext.Button({
+            pressed: false,
+            enableToggle:true,
+            text:'View Recycle Bin',
+            tooltip: {title:'Recycle Bin',text:'View the trips that have been removed and currently in the Recycle Bin'},
+            //iconCls: 'summary',
+            scope:this,
+            toggleHandler: function(btn, pressed){
+                //this.grid.togglePreview(pressed);
+                console.log('About to view Recycle Bin', pressed);
+                this.grid.store.removeAll();
+                if (pressed)
+                    this.fireEvent('recycleselect', { date: glb_date.format('Y-m-d'), name: glb_date.format('F jS, Y'), text: glb_date.format('F jS, Y'), recycled:true});
+                else
+                    this.fireEvent('recycleselect', { date: glb_date.format('Y-m-d'), name: glb_date.format('F jS, Y'), text: glb_date.format('F jS, Y'), recycled:false});
+            }
+    });
+
+    this.defaultTimeChanger = new Ext.Button({
+            text: 'Change Default Times',
+            scope: this,
+            handler: this.changeDefaultTimes
+    });
 
     this.grid = new ScheduleGrid(this, {
         tbar:[{
@@ -50,6 +74,7 @@ MainPanel = function(){
             scope:this,
             handler: function (){
                 var trip = this.grid.getSelectionModel().getSelected();
+                debugger;
                 if (trip) {
                     this.deleteTrip(trip);
                 }
@@ -63,6 +88,14 @@ MainPanel = function(){
             scope:this,
             handler: function () {
                 window.open('?_format=printerfriendly&date=' + glb_date.dateFormat('Y-m-d'));
+            }
+        }, '-', {
+            id:'export',
+            iconCls:'print-icon',
+            text:'Export to CSV',
+            scope:this,
+            handler: function () {
+                this.exportToCsv(this.grid.colModel.config, this.grid.store.data.items);
             }
         }, '-', {
             split:true,
@@ -107,7 +140,10 @@ MainPanel = function(){
             toggleHandler: function(btn, pressed){
                 this.grid.togglePreview(pressed);
             }
-        }]
+        }, '-', 
+        this.recycleBinButton, '-',
+        this.defaultTimeChanger
+    ]
     });
 
 //    this.grid.getView().on("refresh", function (view) {
@@ -168,7 +204,7 @@ MainPanel = function(){
 Ext.extend(MainPanel, Ext.TabPanel, {
 
     loadSchedule : function(schedule){
-        this.grid.loadSchedule(schedule.date);
+        this.grid.loadSchedule(schedule.date, schedule.recycled);
         Ext.getCmp('main-view').setTitle(schedule.name);
     },
 
@@ -318,6 +354,80 @@ Ext.extend(MainPanel, Ext.TabPanel, {
                     break;
             }
         }
+    },
+    
+    changeDefaultTimes : function(btn, events){
+        if (!this.win){
+            this.win = new DefaultTripTimeEditor();
+            this.win.on('changeDefaultTimes', this.changeDefaultTimes, this);
+        }
+        this.win.show(btn);
+    },
+    
+    exportToCsv : function(columnCfgs, data){
+
+            // Need to start with an apostrohpe: https://support.microsoft.com/en-us/kb/323626
+            var str = ''; 
+            var fieldList = [];
+            
+            // Since this is an old version of ExtJS, we'll do this the longer way.
+            for (var i = 0; i < columnCfgs.length; i++) {
+                var cfg = columnCfgs[i];
+                var colName = '';
+                if (cfg.header !== undefined) {
+                    colName = cfg.header === 'ID' ? 'Trip ID' : cfg.header;
+                }
+                
+                if (cfg.dataIndex !== undefined) {
+                    fieldList.push(cfg.dataIndex);
+                }
+
+                if (i === 0)
+                    str = colName;
+                else
+                    str = str + ',' + colName;
+            };
+            
+            str += '\r\n';
+            
+            // Loop through all rows to grab the data
+            for (var i = 0; i < data.length; i++) {
+                var dataRow = data[i];
+                var costAmount = 0;
+                var csvRow = '';
+                
+                // Now loop through the columns to ensure the fields line up with the column config
+                for (var j = 0; j < fieldList.length; j++){
+                    if (j > 0) csvRow += ',';
+                    var fieldValue = '"';
+                    if (dataRow.get(fieldList[j]) !== undefined)
+                        fieldValue += dataRow.get(fieldList[j]);
+                    fieldValue += '"';
+                    csvRow += fieldValue;
+                    
+                    if (fieldList[j] === 'cost')
+                        costAmount = dataRow.get(fieldList[j]);
+                }
+                
+                // Only export rows for trips with a Cost > 0
+                if (costAmount > 0)
+                {
+                    str += csvRow;
+                    str += '\r\n';
+                }
+            }
+            
+        var uri = 'data:text/csv;charset=utf-8,';
+        
+        //window.open( "data:text/csv;charset=utf-8," + escape(str))
+        //window.location.href = uri + escape(str);
+        
+        var link = document.createElement("a");
+        link.setAttribute("href", uri + escape(str));
+        link.setAttribute("download", "trip_export.csv");
+
+        link.click(); 
+        
     }
 
 });

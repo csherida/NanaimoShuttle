@@ -10,8 +10,8 @@
     /**
      * Establish Database Connection
      */
-    $connection = mysql_connect('localhost', 'nanaimo8_airport', 'P@ssw0rd') or die ("database connection error");
-    mysql_select_db('nanaimo8_airporter', $connection) or die("database selection error");
+    $connection = mysql_connect('localhost', 'nanaimo8_airport', 'P@ssw0rd') or die ("database connection error-Chris was here 1");
+    mysql_select_db('nanaimo8_airporter', $connection) or die("database selection error-Chris was here 2");
 
     /**
      * Authentication Function

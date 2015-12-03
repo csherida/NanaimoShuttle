@@ -133,6 +133,7 @@ if (isset($_GET['_format']) && isset($_GET['date']) /*&& $_SERVER['REMOTE_ADDR']
 	<!-- Application Code -->
 
 	<script type="text/javascript" src="res/js/TripWindow.js"></script>
+        <script type="text/javascript" src="res/js/admin/DefaultTripTimeEditor.js"></script>
 
     <script type="text/javascript" src="res/js/<?=$authuser['type']; ?>/ScheduleGrid.js"></script>
     <script type="text/javascript" src="res/js/<?=$authuser['type']; ?>/MainPanel.js"></script>

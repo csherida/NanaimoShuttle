@@ -9,9 +9,9 @@ if ( $_SERVER['REMOTE_ADDR'] != '70.66.70.30' ) {
 }
 
 $connection = mysql_connect('localhost', 'nanaimos_airport', 'f&hjk1dA#') or die ("database connection error");
-mysql_select_db('nanaimos_airporter', $connection) or die("database selection error");
+mysql_select_db('nanaimo8_airporter', $connection) or die("database selection error");
     
-$sql = "SELECT * FROM `trips`";
+$sql = "SELECT * FROM `trips` WHERE recycled <> 'true'";
 $trips = mysql_query( $sql );
 
 if ( $trips ) {

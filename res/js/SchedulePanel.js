@@ -22,7 +22,7 @@ SchedulePanel = function() {
     next_month = new Date();
     if (next_month.getMonth() + 1 < 12) {
         next_month.setMonth(next_month.getMonth() + 1);
-    } else {
+    } else {    
         next_month.setMonth(0);
     }
 

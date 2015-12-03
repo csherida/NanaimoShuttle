@@ -12,7 +12,7 @@ if (empty($user)) {
 
 /* Fetch schedule for the specified date */
 if (isset($_REQUEST['date'])) {
-	$sql = "SELECT * FROM `trips` WHERE `date`='" . mysql_real_escape_string($_REQUEST['date']) . "' OR
+	$sql = "SELECT * FROM `trips` WHERE recycled <> 'true' AND `date`='" . mysql_real_escape_string($_REQUEST['date']) . "' OR
 										 (`date` IS NULL AND NOT FIND_IN_SET('" . mysql_real_escape_string($_REQUEST['date']) . "', `exclude`))
 			ORDER BY `time` ASC";
 

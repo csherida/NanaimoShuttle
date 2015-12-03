@@ -39,6 +39,15 @@ Ext.onReady(function(){
     mainPanel = new MainPanel();
 
     schedules.on('scheduleselect', function(schedule){
+        console.log('About to load the schedule.', mainPanel);
+        if (mainPanel.recycleBinButton)
+            mainPanel.recycleBinButton.toggle(false, true);
+        mainPanel.grid.store.removeAll();
+        mainPanel.loadSchedule(schedule);
+    });
+    
+    mainPanel.on('recycleselect', function(schedule){
+        console.log('About to get recycled items.');
         mainPanel.loadSchedule(schedule);
     });
 
