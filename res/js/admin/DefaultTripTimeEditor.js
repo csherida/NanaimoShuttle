@@ -1,9 +1,6 @@
-DefaultTripTimeEditor = function () {
-
-//    this.reader = new Ext.data.JsonReader({
-//        root: 'trips',
-//        id: 'id'
-//    }, Trip),
+DefaultTripTimeEditor = function(gridStore) {
+    
+    this.gridStore = gridStore;
 
     this.store = new Ext.data.JsonStore({
         root: 'trips',
@@ -28,60 +25,6 @@ DefaultTripTimeEditor = function () {
     
     this.tripTimes = [];
     
-    this.tripTime = new Ext.form.TimeField({
-        id: 'trip-time',
-        fieldLabel: 'Time',
-        width: 250,
-        validationEvent: false,
-        validateOnBlur: false,
-        allowBlank: false,
-        msgTarget: 'under',
-        triggerAction: 'all',
-        displayField: 'time',
-        mode: 'local',
-        format: 'H:i'
-//        listeners:{
-//            valid: this.syncShadow,
-//            invalid: this.syncShadow,
-//            scope: this
-//        }
-    });
-
-
-    this.tripAddress = new Ext.form.TextField({
-        id: 'trip-address',
-        fieldLabel: 'Street Name',
-        width: '100%',
-        validationEvent: false,
-        validateOnBlur: false,
-        msgTarget: 'under',
-        triggerAction: 'all',
-        displayField: 'address',
-        mode: 'local',
-        listeners: {
-            valid: this.syncShadow,
-            invalid: this.syncShadow,
-            scope: this
-        }
-    });
-
-    this.tripDestination = new Ext.form.TextField({
-        id: 'trip-destination ',
-        fieldLabel: 'Destination',
-        width: '100%',
-        validationEvent: false,
-        validateOnBlur: false,
-        msgTarget: 'under',
-        triggerAction: 'all',
-        displayField: 'destination',
-        mode: 'local',
-        listeners: {
-            valid: this.syncShadow,
-            invalid: this.syncShadow,
-            scope: this
-        }
-    });
-    
     this.panel = new Ext.Panel({
         id: 'main_panel',
 //        items: [
@@ -91,16 +34,6 @@ DefaultTripTimeEditor = function () {
         border: false,
         bodyStyle: 'background:transparent;padding:10px;'
     });
-
-//    this.form = new Ext.FormPanel({
-//        //labelAlign:'top',
-//        items: [
-//            this.tripTime,
-//            this.panel
-//        ],
-//        border: false,
-//        bodyStyle: 'background:transparent;padding:10px;'
-//    });
 
     DefaultTripTimeEditor.superclass.constructor.call(this, {
         title: 'Default Trip Time Editor',
@@ -115,11 +48,7 @@ DefaultTripTimeEditor = function () {
         //autoScroll: true,
         closeAction: 'hide',
         buttons: [{
-                text: 'Add Trip',
-                handler: this.onModify,
-                scope: this
-            }, {
-                text: 'Cancel',
+                text: 'Close',
                 handler: this.hide.createDelegate(this, [])
             }],
         items: this.panel
@@ -139,7 +68,7 @@ Ext.extend(DefaultTripTimeEditor, Ext.Window, {
     onModify: function (btn, event) {
         var tripId = btn.id.replace('btn','');
         var timeValue = '';
-        debugger;
+
         for(var i = 0; i < this.tripTimes.length; i ++){
             if (this.tripTimes[i].id === 'trip-time' + tripId){
                 timeValue = this.tripTimes[i].value;
@@ -151,7 +80,6 @@ Ext.extend(DefaultTripTimeEditor, Ext.Window, {
             console.log('New time value: ', timeValue);
             this.el.mask('Modifying Default Trip...', 'x-mask-loading');
 
-            debugger;
             var effectiveDate = (new Date()).dateFormat('Y-m-d');
             //
             Ext.Ajax.request({
@@ -169,44 +97,13 @@ Ext.extend(DefaultTripTimeEditor, Ext.Window, {
     },
     failureNotification: function (response) {
         console.log('Error calling default trip time editor', response.responseText);
-//        if (this.tripDate.getValue() === '') {
-//            this.tripDate.markInvalid('You must select a date for this trip.');
-//        }
-//        if (this.tripTime.getValue() === '') {
-//            this.tripTime.markInvalid('You must select a time for this trip.');
-//        }
-//        if (this.tripAddress.getValue() == '') {
-//            this.tripAddress.markInvalid('Please provide a pickup location for this trip.');
-//        }
-//        if (this.tripName.getValue() == '') {
-//            this.tripName.markInvalid('Please provide a name for this trip.');
-//        }
         this.el.unmask();
     },
     validateUpdate: function (response, options) {
-        debugger;
+
         response = Ext.util.JSON.decode(response.responseText);
         if (response.errors.length === 0) {
-            // success
-//            var record = new Trip({
-//                id: response.record.id,
-//                date: response.record.date,
-//                time: response.record.time,
-//                cid: response.record.cid,
-//                name: response.record.name,
-//                passengers: response.record.passengers,
-//                driver: response.record.driver,
-//                phone: response.record.phone,
-//                cost: response.record.cost,
-//                address_apt: response.record.address_apt,
-//                address_num: response.record.address_num,
-//                address_street: response.record.address_street,
-//                destination: response.record.destination,
-//                comments: response.record.comments,
-//                timestamp: response.record.timestamp
-//            });
-//            this.store.add(record);
-            this.store.reload();
+            this.gridStore.reload();
             this.el.unmask();
             this.hide();
         } else {
@@ -262,7 +159,7 @@ Ext.extend(DefaultTripTimeEditor, Ext.Window, {
                         width: 100,
                         items: { xtype:'button', id: 'btn' + tripId, text: 'Change Time', scope: this, handler: this.onModify },
                         bodyStyle: 'background:transparent;padding;'
-                    },
+                    }
                 ],
                 bodyStyle: 'background:transparent;padding:5px;'
             });

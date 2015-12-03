@@ -74,7 +74,6 @@ MainPanel = function(){
             scope:this,
             handler: function (){
                 var trip = this.grid.getSelectionModel().getSelected();
-                debugger;
                 if (trip) {
                     this.deleteTrip(trip);
                 }
@@ -358,10 +357,10 @@ Ext.extend(MainPanel, Ext.TabPanel, {
     
     changeDefaultTimes : function(btn, events){
         if (!this.win){
-            this.win = new DefaultTripTimeEditor();
+            this.win = new DefaultTripTimeEditor(this.grid.store);
             this.win.on('changeDefaultTimes', this.changeDefaultTimes, this);
         }
-        this.win.show(btn);
+        this.win.show(btn);       
     },
     
     exportToCsv : function(columnCfgs, data){
@@ -400,8 +399,16 @@ Ext.extend(MainPanel, Ext.TabPanel, {
                 for (var j = 0; j < fieldList.length; j++){
                     if (j > 0) csvRow += ',';
                     var fieldValue = '"';
-                    if (dataRow.get(fieldList[j]) !== undefined)
-                        fieldValue += dataRow.get(fieldList[j]);
+                    if (dataRow.get(fieldList[j]) !== undefined) {
+                        // Format the dates and times
+                        databaseValue = dataRow.get(fieldList[j]);
+                        if (fieldList[j] === 'date')
+                            fieldValue += databaseValue.dateFormat('Y-m-d');
+                        else if (fieldList[j] === 'time')
+                            fieldValue += databaseValue.dateFormat('H:i:s');
+                        else
+                            fieldValue += databaseValue;
+                    }
                     fieldValue += '"';
                     csvRow += fieldValue;
                     

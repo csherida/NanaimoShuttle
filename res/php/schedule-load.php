@@ -7,7 +7,7 @@ $date   = $_REQUEST['date'];
 $filter = $_REQUEST['filter'];
 $recycled = $_REQUEST['recycled'];
 
-$where = "CURDATE() BETWEEN effective and expiration AND ";
+$where = "";
 $search = array();
 if (is_array($filter)) {
 	for ($i = 0; $i < count($filter); $i++) {
@@ -65,7 +65,7 @@ else {
 //}
 
 $table = 'trips';
-$query = "SELECT * FROM $table WHERE ((expiration IS NULL) OR ('$date' BETWEEN effective AND expiration)) AND $recycleClause AND " . trim($where, " AND");
+$query = "SELECT * FROM $table WHERE ('$date' BETWEEN effective AND expiration) AND $recycleClause AND " . trim($where, " AND");
 
 $json['query'] = $query;
 
